@@ -33,13 +33,13 @@ const csePermissions: Partial<Record<View, boolean>> = {
 
 
 export const INITIAL_PRODUCTS: Product[] = [
-  { id: 1, name: 'Americano', category: 'Coffee', price: 2.50, imageUrl: 'https://images.unsplash.com/photo-1579992305312-3a3d5cf3793d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&q=80' },
-  { id: 2, name: 'Latte', category: 'Coffee', price: 3.50, imageUrl: 'https://images.unsplash.com/photo-1561882468-91101f2e5f87?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&q=80' },
-  { id: 3, name: 'Cappuccino', category: 'Coffee', price: 3.50, imageUrl: 'https://images.unsplash.com/photo-1557006021-b1da71168341?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&q=80' },
-  { id: 4, name: 'Croissant', category: 'Pastry', price: 2.75, imageUrl: 'https://images.unsplash.com/photo-1587665991830-2a543f07a102?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&q=80' },
-  { id: 5, name: 'Muffin', category: 'Pastry', price: 3.00, imageUrl: 'https://images.unsplash.com/photo-1550617931-e17a7b70dce2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&q=80' },
-  { id: 6, name: 'Iced Tea', category: 'Beverage', price: 2.25, imageUrl: 'https://images.unsplash.com/photo-1556745753-b2904692b3cd?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&q=80' },
-  { id: 7, name: 'Sandwich', category: 'Food', price: 6.50, imageUrl: 'https://images.unsplash.com/photo-1528735602780-2552fd46c7af?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&q=80' },
+  { id: "1", name: 'Americano', category: 'Coffee', price: 2.50, imageUrl: 'https://images.unsplash.com/photo-1579992305312-3a3d5cf3793d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&q=80' },
+  { id: "2", name: 'Latte', category: 'Coffee', price: 3.50, imageUrl: 'https://images.unsplash.com/photo-1561882468-91101f2e5f87?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&q=80' },
+  { id: "3", name: 'Cappuccino', category: 'Coffee', price: 3.50, imageUrl: 'https://images.unsplash.com/photo-1557006021-b1da71168341?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&q=80' },
+  { id: "4", name: 'Croissant', category: 'Pastry', price: 2.75, imageUrl: 'https://images.unsplash.com/photo-1587665991830-2a543f07a102?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&q=80' },
+  { id: "5", name: 'Muffin', category: 'Pastry', price: 3.00, imageUrl: 'https://images.unsplash.com/photo-1550617931-e17a7b70dce2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&q=80' },
+  { id: "6", name: 'Iced Tea', category: 'Beverage', price: 2.25, imageUrl: 'https://images.unsplash.com/photo-1556745753-b2904692b3cd?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&q=80' },
+  { id: "7", name: 'Sandwich', category: 'Food', price: 6.50, imageUrl: 'https://images.unsplash.com/photo-1528735602780-2552fd46c7af?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&q=80' },
 ];
 
 export const INITIAL_SALES: Sale[] = [

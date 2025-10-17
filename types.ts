@@ -10,8 +10,8 @@ export type View =
   | 'talent_data'
   | 'setting';
 
-export interface Product {
-  id: number;
+export type Product = {
+  id: string;
   name: string;
   category: string;
   price: number;
@@ -70,3 +70,4 @@ export interface Service {
     serviceId: string;
     name: string;
 }
+
