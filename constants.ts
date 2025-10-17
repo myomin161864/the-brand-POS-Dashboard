@@ -33,7 +33,7 @@ const csePermissions: Partial<Record<View, boolean>> = {
 
 
 export const INITIAL_PRODUCTS: Product[] = [
-  { id: 1, name: 'Espresso', category: 'Coffee', price: 2.50, imageUrl: 'https://images.unsplash.com/photo-1579992305312-3a3d5cf3793d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&q=80' },
+  { id: 1, name: 'Americano', category: 'Coffee', price: 2.50, imageUrl: 'https://images.unsplash.com/photo-1579992305312-3a3d5cf3793d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&q=80' },
   { id: 2, name: 'Latte', category: 'Coffee', price: 3.50, imageUrl: 'https://images.unsplash.com/photo-1561882468-91101f2e5f87?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&q=80' },
   { id: 3, name: 'Cappuccino', category: 'Coffee', price: 3.50, imageUrl: 'https://images.unsplash.com/photo-1557006021-b1da71168341?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&q=80' },
   { id: 4, name: 'Croissant', category: 'Pastry', price: 2.75, imageUrl: 'https://images.unsplash.com/photo-1587665991830-2a543f07a102?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&q=80' },
