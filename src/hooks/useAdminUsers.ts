@@ -33,16 +33,32 @@ export function useAdminUsers() {
       const rows = (data as AdminRow[] | null) ?? [];
       if (!rows.length) return FALLBACK_ADMINS;
 
+      // Deduplicate by email (keep the latest by joined_date)
+      const dedupedByEmail = new Map<string, AdminRow>();
+      for (const r of rows) {
+        const existing = dedupedByEmail.get(r.email);
+        if (!existing) {
+          dedupedByEmail.set(r.email, r);
+        } else {
+          // prefer the row with the later joined_date
+          if (new Date(r.joined_date) > new Date(existing.joined_date)) {
+            dedupedByEmail.set(r.email, r);
+          }
+        }
+      }
+
+      const uniqueRows = Array.from(dedupedByEmail.values());
+
       // Map DB rows → your type. Validate role/status against allowed unions.
       const knownRoles = new Set<AdminRole>(['Founder', 'Manager', 'Supervisor', 'Customer Service Executive']);
       const knownStatuses = new Set<UserStatus>(['Active', 'Inactive']);
 
-      return rows.map((r) => {
+      return uniqueRows.map((r) => {
         const roleValue: AdminRole = knownRoles.has(r.role as AdminRole) ? (r.role as AdminRole) : 'Manager';
         const statusValue: UserStatus = knownStatuses.has(r.status as UserStatus) ? (r.status as UserStatus) : 'Inactive';
 
         return {
-          id: (Number.isNaN(Number(r.id)) ? Number(new Date().getTime()) : Number(r.id)) as number, // ensure numeric id for UI-only purposes
+          id: (Number.isNaN(Number(r.id)) ? Number(new Date(r.joined_date).getTime()) : Number(r.id)) as number,
           name: r.name,
           email: r.email,
           role: roleValue,
