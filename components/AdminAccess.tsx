@@ -1,9 +1,8 @@
 import React, { useState, useMemo } from 'react';
-import { AdminUser, UserStatus } from '../types';
+import { AdminUser } from '../types';
+import Card from './Card';
 import CreateAdminUserModal from './CreateAdminUserModal';
 import EditAdminUserModal from './EditAdminUserModal';
-import PermissionsModal from './PermissionsModal';
-import Card from './Card';
 import { UserPlusIcon, SearchIcon, PencilIcon, TrashIcon, SettingIcon } from './Icons';
 
 interface AdminAccessProps {
@@ -14,13 +13,11 @@ interface AdminAccessProps {
 }
 
 const AdminAccess: React.FC<AdminAccessProps> = ({ users, onAddUser, onUpdateUser, onDeleteUser }) => {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [isCreateModalOpen, setCreateModalOpen] = useState(false);
-  const [editingUser, setEditingUser] = useState<AdminUser | null>(null);
-  const [permissionsUser, setPermissionsUser] = useState<AdminUser | null>(null);
+const [searchTerm, setSearchTerm] = useState('');
+const [isCreateModalOpen, setCreateModalOpen] = useState(false);
+const [editingUser, setEditingUser] = useState<AdminUser | null>(null);
 
-
-  const filteredUsers = useMemo(() => {
+const filteredUsers = useMemo(() => {
     if (!searchTerm) return users;
     const lowercasedFilter = searchTerm.toLowerCase();
     return users.filter(user =>
@@ -30,25 +27,8 @@ const AdminAccess: React.FC<AdminAccessProps> = ({ users, onAddUser, onUpdateUse
     );
   }, [users, searchTerm]);
 
-  const handleDelete = (userId: number) => {
-    if (window.confirm('Are you sure you want to delete this user?')) {
-        onDeleteUser(userId);
-    }
-  }
 
-  const handleStatusToggle = (user: AdminUser) => {
-    const newStatus: UserStatus = user.status === 'Active' ? 'Inactive' : 'Active';
-    onUpdateUser({ ...user, status: newStatus });
-  };
-  
-  // const renderDisplayId = (user: AdminUser) => {
-  //   if (user.display_id != null) return String(user.display_id);
-  //   // fallback: if id is a UUID string, show first 8 chars; otherwise stringify
-  //   if (typeof user.id === 'string') return user.id.length > 8 ? user.id.slice(0, 8) : user.id;
-  //   return String(user.id);
-  // };
-  
-  return (
+return (
     <div className="space-y-6">
        <h2 className="text-3xl font-bold text-white">Admin Access Control</h2>
 
@@ -69,8 +49,6 @@ const AdminAccess: React.FC<AdminAccessProps> = ({ users, onAddUser, onUpdateUse
             <input
                 type="text"
                 placeholder="Search for (name/email/role)..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full p-3 pl-10 bg-gray-800 border border-gray-700 rounded-lg text-gray-200 placeholder-gray-500 focus:ring-2 focus:ring-brand-primary focus:border-transparent transition"
             />
             <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
@@ -118,7 +96,7 @@ const AdminAccess: React.FC<AdminAccessProps> = ({ users, onAddUser, onUpdateUse
                           id={`status-toggle-${user.id}`}
                           className="sr-only"
                           checked={user.status === 'Active'}
-                          onChange={() => handleStatusToggle(user)}
+                          onChange={() => "Alert('Status switched!');"}
                         />
                         <div className={`block w-10 h-6 rounded-full transition ${user.status === 'Active' ? 'bg-positive' : 'bg-gray-600'}`}></div>
                         <div className={`dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform ${user.status === 'Active' ? 'translate-x-4' : ''}`}></div>
@@ -133,10 +111,10 @@ const AdminAccess: React.FC<AdminAccessProps> = ({ users, onAddUser, onUpdateUse
                         <button onClick={() => setEditingUser(user)} className="text-gray-400 hover:text-brand-primary transition" title="Edit User">
                             <PencilIcon className="w-5 h-5" />
                         </button>
-                        <button onClick={() => setPermissionsUser(user)} className="text-gray-400 hover:text-brand-primary transition" title="Permissions">
+                        <button onClick={() => "alert('Permission User clicked!')"} className="text-gray-400 hover:text-brand-primary transition" title="Permissions">
                             <SettingIcon className="w-5 h-5" />
                         </button>
-                        <button onClick={() => handleDelete(user.id)} className="text-gray-400 hover:text-negative transition" title="Delete User">
+                        <button onClick={() => "alert('Delete User clicked!);"} className="text-gray-400 hover:text-negative transition" title="Delete User">
                             <TrashIcon className="w-5 h-5" />
                         </button>
                     </div>
@@ -165,14 +143,6 @@ const AdminAccess: React.FC<AdminAccessProps> = ({ users, onAddUser, onUpdateUse
             onClose={() => setEditingUser(null)}
             onUpdateUser={onUpdateUser}
             userToEdit={editingUser}
-        />
-      )}
-      {permissionsUser && (
-        <PermissionsModal
-            isOpen={!!permissionsUser}
-            onClose={() => setPermissionsUser(null)}
-            user={permissionsUser}
-            onSave={onUpdateUser}
         />
       )}
     </div>
