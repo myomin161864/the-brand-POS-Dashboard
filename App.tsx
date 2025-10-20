@@ -57,19 +57,66 @@ function AppInner() {
   const firstError = errProducts?.message || errSales?.message || errCustomers?.message || errAdmins?.message || errBranches?.message || errServices?.message;
 
   // 🔐 Authentication Logic (prototype)
-  const handleLogin = (email: string, password: string): boolean => {
-    // NOTE: For production, switch to Supabase Auth and hashed passwords.
-    const user = adminUsers.find(u => u.email === email && u.password === password);
-    if (user && user.status === 'Active') {
-      setCurrentUser(user);
-      const firstView = (Object.keys(user.permissions) as View[]).find(p => (user.permissions as any)[p]) || 'overview';
-      setCurrentView(firstView);
-      return true;
-    }
+  
+const handleLogin = async (email: string, password: string): Promise<boolean> => {
+  const { error } = await supabase.auth.signInWithPassword({ email, password });
+  if (error) {
+    console.error('Login failed:', error.message);
     return false;
+  }
+
+  const { data: userData } = await supabase.auth.getUser();
+  const authUserId = userData?.user?.id;
+  if (!authUserId) return false;
+
+  // Try to fetch profile
+  const { data: profile, error: profileError } = await supabase
+    .from('admin_users')
+    .select('*')
+    .eq('auth_user_id', authUserId)
+    .single();
+
+  // If no profile, create one on the fly (optional)
+  if (profileError) {
+    const { error: insertErr } = await supabase.from('admin_users').insert({
+      auth_user_id: authUserId,
+      email,
+      name: email.split('@')[0],
+      role: 'Manager',
+      status: 'Active',
+      joined_date: new Date().toISOString(),
+      last_login: null,
+    });
+    if (insertErr) {
+      console.error('Failed to create profile:', insertErr.message);
+      return false;
+    }
+    // Re-fetch the new profile
+    const { data: created } = await supabase
+      .from('admin_users')
+      .select('*')
+      .eq('auth_user_id', authUserId)
+      .single();
+    if (!created) return false;
+    setCurrentUser(created as AdminUser);
+    return true;
+  }
+
+  if (profile?.status !== 'Active') return false;
+  setCurrentUser(profile as AdminUser);
+
+  // Optional: update last_login
+  await supabase.from('admin_users').update({ last_login: new Date().toISOString() }).eq('auth_user_id', authUserId);
+  return true;
+};
+
+
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    setCurrentUser(null);
   };
 
-  const handleLogout = () => setCurrentUser(null);
 
   // 💳 Create sale: write to Supabase, then refetch
   // newSaleData.items: [{ product, quantity }]
@@ -172,21 +219,21 @@ function AppInner() {
   // 👤 Admin Users — prototype CRUD (Supabase table: admin_users)
   // NOTE: If your admin_users table uses UUIDs but your type uses number,
   // either switch the type to string or use a numeric primary key in the table.
-  const handleAddUser = async (newUser: AdminUser) => {
-    const { error } = await supabase.from('admin_users').insert({
-      // adjust mapping as per your admin_users schema
-      // if you keep numeric id locally, you can omit id and let DB generate
-      name: newUser.name,
-      email: newUser.email,
-      role: newUser.role,
-      status: newUser.status,
-      joined_date: newUser.joinedDate,
-      last_login: newUser.lastLogin ?? null,
-      permissions: newUser.permissions as any, // jsonb
-      password: newUser.password, // ⚠️ dev only; use hashed + Supabase Auth later
-    });
-    if (!error) await refetchAdmins();
-  };
+  
+const handleAddUser = async (newUser: AdminUser) => {
+  // if you already created the Auth user server-side, you'll have auth_user_id here
+  const { error } = await supabase.from('admin_users').insert({
+    auth_user_id: newUser.auth_user_id ?? null,
+    name: newUser.name,
+    email: newUser.email,
+    role: newUser.role,
+    status: newUser.status ?? 'Active',
+    joined_date: new Date().toISOString(),
+    last_login: null,
+  });
+  if (!error) await refetchAdmins();
+};
+
 
   const handleUpdateUser = async (updatedUser: AdminUser) => {
     const { error } = await supabase
@@ -198,8 +245,7 @@ function AppInner() {
         status: updatedUser.status,
         joined_date: updatedUser.joinedDate,
         last_login: updatedUser.lastLogin ?? null,
-        permissions: updatedUser.permissions as any,
-        password: updatedUser.password, // ⚠️ dev only
+        // password: updatedUser.password, // ⚠️ dev only
       })
       .eq('email', updatedUser.email); // choose your unique key (email recommended)
     if (!error) {
@@ -210,11 +256,10 @@ function AppInner() {
     }
   };
 
-  const onDeleteUser = async (userId: number) => {
-    // If your table uses email/uuid, change this where clause accordingly
-    const { error } = await supabase.from('admin_users').delete().eq('id', userId);
-    if (!error) await refetchAdmins();
-  };
+  const onDeleteUser = async (userId: string) => {
+  const { error } = await supabase.from('admin_users').delete().eq('id', userId);
+  if (!error) await refetchAdmins();
+};
 
   // 🏬 Branches
   const handleAddBranch = async (newBranch: BranchInfo) => {
@@ -246,9 +291,11 @@ function AppInner() {
 
   // 🔎 Render Logic
   const renderView = () => {
-    if (!currentUser?.permissions[currentView]) {
-      return <div className="p-8 text-white">You do not have permission to view this page.</div>;
-    }
+  
+if (!currentUser?.permissions?.[currentView]) {
+  return <div className="p-8 text-white">You do not have permission to view this page.</div>;
+}
+
 
     switch (currentView) {
       case 'overview':
@@ -309,6 +356,7 @@ function AppInner() {
     return <Login onLogin={handleLogin} />;
   }
 
+  
   return (
     <div className="flex h-screen bg-brand-background text-gray-100 font-sans">
       <div className={`fixed inset-y-0 left-0 z-30 transform ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'} transition-transform duration-300 ease-in-out lg:relative lg:translate-x-0`}>
@@ -338,4 +386,3 @@ function AppInner() {
     </div>
   );
 }
-``

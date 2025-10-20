@@ -41,6 +41,13 @@ const AdminAccess: React.FC<AdminAccessProps> = ({ users, onAddUser, onUpdateUse
     onUpdateUser({ ...user, status: newStatus });
   };
   
+  // const renderDisplayId = (user: AdminUser) => {
+  //   if (user.display_id != null) return String(user.display_id);
+  //   // fallback: if id is a UUID string, show first 8 chars; otherwise stringify
+  //   if (typeof user.id === 'string') return user.id.length > 8 ? user.id.slice(0, 8) : user.id;
+  //   return String(user.id);
+  // };
+  
   return (
     <div className="space-y-6">
        <h2 className="text-3xl font-bold text-white">Admin Access Control</h2>
@@ -82,6 +89,7 @@ const AdminAccess: React.FC<AdminAccessProps> = ({ users, onAddUser, onUpdateUse
           <table className="w-full text-sm text-left text-gray-400">
             <thead className="text-xs text-gray-300 uppercase bg-gray-800">
               <tr>
+                <th scope="col" className="px-6 py-3">ID</th>
                 <th scope="col" className="px-6 py-3">Name</th>
                 <th scope="col" className="px-6 py-3">Email</th>
                 <th scope="col" className="px-6 py-3">Role</th>
@@ -95,12 +103,13 @@ const AdminAccess: React.FC<AdminAccessProps> = ({ users, onAddUser, onUpdateUse
             <tbody>
               {filteredUsers.map((user) => (
                 <tr key={user.id} className="bg-gray-900 border-b border-gray-800 hover:bg-gray-800/50">
+                  <th scope="row" className="px-6 py-4 font-medium text-gray-100 whitespace-nowrap">{user.display_id}</th>
                   <th scope="row" className="px-6 py-4 font-medium text-gray-100 whitespace-nowrap">{user.name}</th>
                   <td className="px-6 py-4">{user.email}</td>
                   <td className="px-6 py-4">{user.role}</td>
                   <td className="px-6 py-4">********</td>
-                  <td className="px-6 py-4">{new Date(user.joinedDate).toLocaleDateString()}</td>
-                  <td className="px-6 py-4">{new Date(user.lastLogin).toLocaleString()}</td>
+                  <td className="px-6 py-4">{user.joinedDate ? new Date(user.joinedDate).toLocaleDateString() : '-'}</td>
+                  <td className="px-6 py-4">{user.lastLogin ? new Date(user.lastLogin).toLocaleString() : '-'}</td>
                   <td className="px-6 py-4">
                     <label htmlFor={`status-toggle-${user.id}`} className="flex items-center cursor-pointer">
                       <div className="relative">

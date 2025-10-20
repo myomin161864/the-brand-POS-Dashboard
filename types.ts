@@ -10,7 +10,7 @@ export type View =
   | 'talent_data'
   | 'setting';
 
-export type Product = {
+export type Product ={
   id: string;
   name: string;
   category: string;
@@ -45,19 +45,34 @@ export interface Customer {
 }
 
 export type UserStatus = 'Active' | 'Inactive';
-export type AdminRole = 'Founder' | 'Manager' | 'Supervisor' | 'Customer Service Executive';
+export type AdminRole = 'Owner' | 'Manager' | 'Staff';
 
-export interface AdminUser {
-  id: number;
+
+export type CreateAdminUserInput = {
   name: string;
   email: string;
-  role: AdminRole;
-  password?: string;
-  status: UserStatus;
-  joinedDate: string; // ISO string
-  lastLogin: string; // ISO string
-  permissions: Partial<Record<View, boolean>>;
+  role: 'Owner' | 'Manager' | 'Staff';
+  status?: 'Active' | 'Inactive';
+  auth_user_id?: string | null; // set after creating Auth user (Admin API)
+};
+
+
+
+export interface AdminUser {
+  id: string;                // UUID (DB PK)
+  display_id?: string | number; // numeric or string for UI
+  auth_user_id: string | null;
+  name: string;
+  email: string;
+  role: 'Owner' | 'Manager' | 'Staff';
+  status: 'Active' | 'Inactive';
+  joinedDate: string;
+  lastLogin: string | null;
+  permissions?: Partial<Record<View, boolean>>;
 }
+
+
+
 
 export interface BranchInfo {
     id: number;

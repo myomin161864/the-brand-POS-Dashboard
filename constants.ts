@@ -56,12 +56,12 @@ export const INITIAL_CUSTOMERS: Customer[] = [
   { id: 'TBC0001', name: 'Charlie Brown', branch: 'The Consultant Plat', joinedDate: '2023-03-10', contact: 'charlie@email.com', totalOrders: 2, totalDollar: 80.50, discountRate: '0%', pages: ['linkedin.com/in/charlie', 'twitter.com/charlie'] },
 ];
 
-export const INITIAL_ADMIN_USERS: AdminUser[] = [
-    { id: 1, name: 'Super Admin', email: 'super@thebrand.com', role: 'Founder', password: 'password123', status: 'Active', joinedDate: '2023-01-01', lastLogin: new Date().toISOString(), permissions: allPermissions },
-    { id: 2, name: 'Manager Mike', email: 'manager@thebrand.com', role: 'Manager', password: 'password123', status: 'Active', joinedDate: '2023-02-01', lastLogin: new Date().toISOString(), permissions: managerPermissions },
-    { id: 3, name: 'Supervisor Sarah', email: 'supervisor@thebrand.com', role: 'Supervisor', password: 'password123', status: 'Active', joinedDate: '2023-03-01', lastLogin: new Date().toISOString(), permissions: supervisorPermissions },
-    { id: 4, name: 'CSE Chris', email: 'cse@thebrand.com', role: 'Customer Service Executive', password: 'password123', status: 'Inactive', joinedDate: '2023-04-01', lastLogin: '2023-09-01T10:00:00.000Z', permissions: csePermissions },
-];
+// export const INITIAL_ADMIN_USERS: AdminUser[] = [
+//     { id: 1, name: 'Super Admin', email: 'super@thebrand.com', role: 'Founder', password: 'password123', status: 'Active', joinedDate: '2023-01-01', lastLogin: new Date().toISOString(), permissions: allPermissions },
+//     { id: 2, name: 'Manager Mike', email: 'manager@thebrand.com', role: 'Manager', password: 'password123', status: 'Active', joinedDate: '2023-02-01', lastLogin: new Date().toISOString(), permissions: managerPermissions },
+//     { id: 3, name: 'Supervisor Sarah', email: 'supervisor@thebrand.com', role: 'Supervisor', password: 'password123', status: 'Active', joinedDate: '2023-03-01', lastLogin: new Date().toISOString(), permissions: supervisorPermissions },
+//     { id: 4, name: 'CSE Chris', email: 'cse@thebrand.com', role: 'Customer Service Executive', password: 'password123', status: 'Inactive', joinedDate: '2023-04-01', lastLogin: '2023-09-01T10:00:00.000Z', permissions: csePermissions },
+// ];
 
 export const INITIAL_BRANCHES: BranchInfo[] = [
     { id: 1, name: 'The Idea Plat', link: 'https://ideaplat.com' },

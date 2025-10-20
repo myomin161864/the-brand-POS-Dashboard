@@ -1,16 +1,12 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '../lib/supabase';
 import type { AdminUser, View, AdminRole, UserStatus } from '../../types';
-import { INITIAL_ADMIN_USERS as FALLBACK_ADMINS } from '../../constants';
 
-/**
- * Expected Supabase schema (prototype):
- * admin_users(id uuid default gen_random_uuid(), name text, email text unique, role text,
- *             status text, joined_date date, last_login timestamptz, permissions jsonb, password text)
- * ⚠️ password is only for dev. In production, use Supabase Auth and hashed passwords.
- */
+// Match your DB columns
 type AdminRow = {
-  id: string;
+  id: string;        
+  display_id: string | number;           // may be numeric id or uuid
+  auth_user_id: string | null;      // uuid or null
   name: string;
   email: string;
   role: string;
@@ -18,7 +14,7 @@ type AdminRow = {
   joined_date: string;
   last_login: string | null;
   permissions: Record<View, boolean> | null;
-  password?: string | null;
+  // password?: string | null;       // only if this column truly exists
 };
 
 export function useAdminUsers() {
@@ -27,49 +23,41 @@ export function useAdminUsers() {
     queryFn: async (): Promise<AdminUser[]> => {
       const { data, error } = await supabase
         .from('admin_users')
-        .select('id,name,email,role,status,joined_date,last_login,permissions,password');
+        // Include display_id and auth_user_id; remove password unless your table has it
+        .select('id,display_id,auth_user_id,name,email,role,status,joined_date,last_login,permissions');
+
       if (error) throw error;
 
       const rows = (data as AdminRow[] | null) ?? [];
-      if (!rows.length) return FALLBACK_ADMINS;
+      if (!rows.length) return []; // ✅ no static fallback
 
-      // Deduplicate by email (keep the latest by joined_date)
-      const dedupedByEmail = new Map<string, AdminRow>();
+      // Deduplicate by email (keep latest by joined_date)
+      const byEmail = new Map<string, AdminRow>();
       for (const r of rows) {
-        const existing = dedupedByEmail.get(r.email);
-        if (!existing) {
-          dedupedByEmail.set(r.email, r);
-        } else {
-          // prefer the row with the later joined_date
-          if (new Date(r.joined_date) > new Date(existing.joined_date)) {
-            dedupedByEmail.set(r.email, r);
-          }
+        const prev = byEmail.get(r.email);
+        if (!prev || new Date(r.joined_date) > new Date(prev.joined_date)) {
+          byEmail.set(r.email, r);
         }
       }
 
-      const uniqueRows = Array.from(dedupedByEmail.values());
-
-      // Map DB rows → your type. Validate role/status against allowed unions.
-      const knownRoles = new Set<AdminRole>(['Founder', 'Manager', 'Supervisor', 'Customer Service Executive']);
+      const knownRoles = new Set<AdminRole>(['Owner', 'Manager', 'Staff']);
       const knownStatuses = new Set<UserStatus>(['Active', 'Inactive']);
 
-      return uniqueRows.map((r) => {
-        const roleValue: AdminRole = knownRoles.has(r.role as AdminRole) ? (r.role as AdminRole) : 'Manager';
-        const statusValue: UserStatus = knownStatuses.has(r.status as UserStatus) ? (r.status as UserStatus) : 'Inactive';
-
-        return {
-          id: (Number.isNaN(Number(r.id)) ? Number(new Date(r.joined_date).getTime()) : Number(r.id)) as number,
-          name: r.name,
-          email: r.email,
-          role: roleValue,
-          status: statusValue,
-          joinedDate: r.joined_date,
-          lastLogin: r.last_login ?? undefined,
-          permissions: (r.permissions ?? {}) as Partial<Record<View, boolean>>,
-          password: r.password ?? 'password123', // dev only
-        } as AdminUser;
-      });
+      return Array.from(byEmail.values()).map((r): AdminUser => ({
+        id: r.id,
+        display_id: r.display_id,                       // keep uuid
+        auth_user_id: r.auth_user_id ?? null,
+        name: r.name,
+        email: r.email,
+        role: knownRoles.has(r.role as AdminRole) ? (r.role as AdminRole) : 'Staff',
+        status: knownStatuses.has(r.status as UserStatus) ? (r.status as UserStatus) : 'Inactive',
+        joinedDate: new Date(r.joined_date).toISOString(),
+        lastLogin: r.last_login ? new Date(r.last_login).toISOString() : null,
+        permissions: (r.permissions ?? {}) as Partial<Record<View, boolean>>,
+        // password: r.password ?? undefined, // only if you really keep this in DB
+      }));
     },
+    // Optional: prefill as empty array to avoid undefined flashes
+    initialData: [],
   });
 }
-``
